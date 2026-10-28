@@ -1,0 +1,264 @@
+<div class="shell">
+  <header class="topbar">
+    <span class="brand"><span class="brand__mark" aria-hidden="true"></span>CHAMFER UI</span>
+    <cf-badge variant="cyan">Angular</cf-badge>
+    <div class="topbar__end">
+      <cf-hints>
+        <cf-hint key="←→">Abas</cf-hint>
+        <cf-hint key="Esc">Fechar</cf-hint>
+      </cf-hints>
+    </div>
+  </header>
+
+  <main class="page">
+    <cf-tabs [(value)]="view">
+      <cf-tab-list>
+        <button cfTab value="components" icon="grid">Componentes</button>
+        <button cfTab value="dashboard" icon="radar">Painel</button>
+        <button cfTab value="form" icon="edit">Formulário</button>
+      </cf-tab-list>
+
+      <!-- ============================ COMPONENTES ============================ -->
+      <cf-tab-panel value="components">
+        <div class="section">
+          <cf-section-header heading="Botões" icon="bolt" />
+          <div class="demo-row">
+            <button cfButton>Padrão</button>
+            <button cfButton variant="solid">Confirmar</button>
+            <button cfButton variant="cyan"><cf-icon name="radar" />Escanear</button>
+            <button cfButton variant="gold">Comprar</button>
+            <button cfButton variant="ghost">Cancelar</button>
+            <button cfButton variant="link">Ver detalhes</button>
+            <button cfButton disabled>Bloqueado</button>
+            <button cfButton size="icon" aria-label="Configurar" cfTooltip="Configurações"><cf-icon name="gear" /></button>
+            <cf-button-group>
+              <button cfButton size="sm" [pressed]="true"><cf-icon name="chip" />Hardware</button>
+              <button cfButton size="sm" [pressed]="false"><cf-icon name="grid" />Diversos</button>
+            </cf-button-group>
+          </div>
+
+          <cf-section-header heading="Badges" icon="star" />
+          <div class="demo-row">
+            <cf-badge>Padrão</cf-badge>
+            <cf-badge variant="solid">Ativo</cf-badge>
+            <cf-badge variant="cyan" pulse>Online</cf-badge>
+            <cf-badge variant="new">Novo</cf-badge>
+            <cf-badge variant="common">Comum</cf-badge>
+            <cf-badge variant="uncommon">Incomum</cf-badge>
+            <cf-badge variant="rare">Raro</cf-badge>
+            <cf-badge variant="epic">Épico</cf-badge>
+            <cf-badge variant="legendary">Lendário</cf-badge>
+            <cf-badge variant="cyan" count>3</cf-badge>
+          </div>
+
+          <div class="showcase">
+            <cf-card>
+              <cf-card-header><h3 cfCardTitle>Nó 0x4F2A</h3><cf-badge variant="cyan">Estável</cf-badge></cf-card-header>
+              <p class="cf-p">Gateway de borda no distrito leste. Latência dentro do limite.</p>
+              <dl cfKv><dt>Latência</dt><dd>18 ms</dd><dt>Uptime</dt><dd>99,97%</dd></dl>
+              <cf-card-footer>
+                <button cfButton variant="ghost" size="sm">Logs</button>
+                <cf-dropdown [(open)]="menuOpen" align="end">
+                  <button cfButton size="sm" cfDropdownTrigger>Ações <cf-icon name="chevronDown" /></button>
+                  <cf-menu>
+                    <cf-menu-label>Nó 0x4F2A</cf-menu-label>
+                    <button cfMenuItem icon="plug" shortcut="C" (click)="toastInfo()">Conectar</button>
+                    <button cfMenuItem icon="search" shortcut="S">Escanear</button>
+                    <cf-menu-separator />
+                    <button cfMenuItem icon="power">Desligar</button>
+                  </cf-menu>
+                </cf-dropdown>
+              </cf-card-footer>
+            </cf-card>
+
+            <cf-card variant="panel" hot corners>
+              <cf-card-header><h3 cfCardTitle>Contrato · Sombra</h3><cf-badge variant="new">Missão</cf-badge></cf-card-header>
+              <p class="cf-p">Painel com dois cantos cortados e marcadores de canto.</p>
+              <cf-progress label="Progresso" [value]="64" />
+              <cf-segments [total]="10" [value]="6" />
+            </cf-card>
+
+            <cf-card>
+              <cf-section-header heading="Controles" tone="red" [level]="3" />
+              <div class="demo-row">
+                <cf-checkbox [(checked)]="encrypt">Criptografar</cf-checkbox>
+                <cf-checkbox [(checked)]="stealth">Modo furtivo</cf-checkbox>
+              </div>
+              <cf-radio-group [(value)]="access">
+                <cf-radio value="pub">Público</cf-radio>
+                <cf-radio value="priv">Privado</cf-radio>
+              </cf-radio-group>
+              <cf-switch [(checked)]="shield">Escudo</cf-switch>
+              <cf-slider label="Potência" [(value)]="power" unit="%" />
+              <cf-field label="Reflexos"><cf-stepper label="Reflexos" [(value)]="reflex" [min]="3" [max]="20" /></cf-field>
+            </cf-card>
+          </div>
+
+          <cf-section-header heading="Inventário" icon="grid" description="Itens com bracket de raridade, hover, seleção e flash de clique." />
+          <cf-tabs [(value)]="invTab">
+            <cf-tab-list>
+              <cf-kbd>Q</cf-kbd>
+              <button cfTab value="inv" icon="grid">Todos</button>
+              <button cfTab value="tech" icon="chip">Tech</button>
+              <cf-kbd>E</cf-kbd>
+            </cf-tab-list>
+            <cf-tab-panel value="inv">
+              <cf-item-grid>
+                @for (it of items; track it.id) {
+                  <button cfItem [label]="it.label" [rarity]="it.rarity" [tag]="it.tag" [amount]="it.amount"
+                          [kind]="it.kind" [icon]="it.icon" [selected]="selectedItem() === it.id"
+                          (click)="selectedItem.set(it.id)"></button>
+                }
+              </cf-item-grid>
+            </cf-tab-panel>
+            <cf-tab-panel value="tech">
+              <cf-item-grid>
+                <button cfItem label="Deck Kiroshi M2" rarity="legendary" tag="Novo" tagVariant="new" amount="680" kind="Tech" icon="item-deck"></button>
+              </cf-item-grid>
+            </cf-tab-panel>
+          </cf-tabs>
+
+          <cf-section-header heading="Feedback" icon="warn" />
+          <div class="demo-col">
+            <cf-alert heading="Intrusão detectada" dismissible>Três tentativas de acesso no nó 0x4F2A.</cf-alert>
+            <cf-alert variant="info" heading="Atualização disponível">Firmware 2.1 pronto para instalar.</cf-alert>
+            <cf-alert variant="success" heading="Contrato concluído" />
+            <cf-alert variant="quest" heading="Nova missão">Encontre o contato no porto antes da meia-noite.</cf-alert>
+            <div class="demo-row">
+              <button cfButton size="sm" (click)="toastDefault()">Toast padrão</button>
+              <button cfButton size="sm" variant="cyan" (click)="toastInfo()">Toast info</button>
+              <button cfButton size="sm" variant="gold" (click)="toastQuest()">Toast missão</button>
+              <button cfButton size="sm" variant="solid" (click)="dialogOpen.set(true)">Abrir dialog</button>
+            </div>
+          </div>
+
+          <cf-dialog [(open)]="dialogOpen" heading="Apagar 1 204 registros?">
+            <p class="cf-p">Os logs do nó 0x4F2A serão removidos de todos os espelhos. Essa ação não pode ser desfeita.</p>
+            <div cfDialogActions>
+              <button cfButton variant="ghost" (click)="dialogOpen.set(false)">Cancelar</button>
+              <button cfButton variant="solid" (click)="wipe()">Apagar</button>
+            </div>
+          </cf-dialog>
+
+          <div class="showcase">
+            <cf-accordion exclusive>
+              <cf-accordion-item heading="Protocolos de acesso" [open]="true">Chaves rotacionam a cada 24 horas.</cf-accordion-item>
+              <cf-accordion-item heading="Espelhos de dados">Três espelhos ativos: centro, porto e leste.</cf-accordion-item>
+              <cf-accordion-item heading="Auditoria">Mantida por 90 dias, depois arquivada a frio.</cf-accordion-item>
+            </cf-accordion>
+            <div class="demo-col">
+              <a cfTile icon="chip" href="#">Fabricação</a>
+              <a cfTile icon="map" href="#" bracket>Mapa</a>
+              <div class="demo-row">
+                <cf-avatar initials="KS" online />
+                <cf-avatar initials="V7" [size]="64" />
+                <cf-sysblock>Protocolo 2077-SAK<br />Acesso autorizado</cf-sysblock>
+              </div>
+            </div>
+            <div class="demo-col">
+              <cf-glitch class="cf-h2" text="Sinal perdido" />
+              <cf-divider variant="tick" />
+              <cf-skeleton width="70%" /><cf-skeleton width="45%" />
+              <div class="demo-row"><cf-spinner /><span class="cf-label">Carregando</span></div>
+            </div>
+          </div>
+        </div>
+      </cf-tab-panel>
+
+      <!-- ============================== PAINEL ============================== -->
+      <cf-tab-panel value="dashboard">
+        <section cfFrame cut="diag" cutSize="lg" line="hot" class="dash" style="padding:20px; --cf-fill: rgb(14 14 23 / .9)">
+          <div class="s12 demo-row" style="justify-content:space-between">
+            <div class="demo-row">
+              <span class="cf-num" style="font-size:22px">130</span><span class="cf-label">Nível</span>
+              <span class="cf-num cf-text-mint" style="font-size:22px">119</span><span class="cf-label">Reputação</span>
+            </div>
+            <div class="demo-row"><cf-badge variant="cyan" pulse>Rede ativa</cf-badge><span class="cf-num cf-text-gold" style="font-size:22px">€$ 15 251</span></div>
+          </div>
+          <cf-card class="s3"><cf-stat label="Nós ativos" value="42" delta="▲ 3" deltaDir="up" /></cf-card>
+          <cf-card class="s3"><cf-stat label="Latência" value="18" unit="ms" delta="▼ 4 ms" deltaDir="down" /></cf-card>
+          <cf-card class="s3"><cf-stat label="Alertas" value="3" tone="red" delta="2 críticos" deltaDir="down" /></cf-card>
+          <cf-card class="s3"><cf-stat label="Carga" value="68%" /><cf-segments [total]="10" [value]="7" /></cf-card>
+          <cf-card class="s8" variant="panel">
+            <cf-card-header>
+              <h3 cfCardTitle>Nós da rede</h3>
+              <cf-input-group icon="search" style="max-width:200px;min-height:32px"><input cfInput placeholder="Filtrar" aria-label="Filtrar nós" /></cf-input-group>
+            </cf-card-header>
+            <cf-table-container>
+              <table cfTable>
+                <thead><tr><th>Nó</th><th>Distrito</th><th>Status</th><th cfNum>Latência</th><th cfNum>Carga</th></tr></thead>
+                <tbody>
+                  @for (n of nodes; track n.id) {
+                    <tr>
+                      <td>{{ n.id }}</td><td>{{ n.district }}</td>
+                      <td><cf-badge [variant]="statusVariant(n.status)">{{ n.status }}</cf-badge></td>
+                      <td cfNum>{{ n.latency === null ? '—' : n.latency + ' ms' }}</td><td cfNum>{{ n.load }}%</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </cf-table-container>
+          </cf-card>
+          <div class="s4 demo-col">
+            <cf-alert heading="Intrusão">Nó 0x1B07, 3 tentativas.</cf-alert>
+            <cf-progress label="Sincronizando banco" [value]="75" caption="Pacote 3 de 4" />
+            <cf-progress label="Escaneando" tone="cyan" indeterminate />
+            <a cfTile icon="map" href="#">Abrir mapa</a>
+            <a cfTile icon="terminal" href="#">Diagnóstico</a>
+          </div>
+          <cf-hints class="s12" style="justify-content:flex-end">
+            <cf-hint key="L" round>Navegar</cf-hint><cf-hint key="Enter">Selecionar</cf-hint><cf-hint key="Esc">Voltar</cf-hint>
+          </cf-hints>
+        </section>
+      </cf-tab-panel>
+
+      <!-- ============================ FORMULÁRIO ============================ -->
+      <cf-tab-panel value="form">
+        <cf-card variant="panel">
+          <cf-section-header heading="Registro de operador" icon="user"
+                             description="Reactive Forms: todos os controles implementam ControlValueAccessor." />
+          <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+            <cf-field label="Codinome" for="handle" help="Visível para o seu grupo." [error]="err('handle')">
+              <cf-input-group icon="user" [invalid]="!!err('handle')"><input cfInput id="handle" formControlName="handle" /></cf-input-group>
+            </cf-field>
+            <cf-field label="Chave de acesso" for="key" [error]="err('key')">
+              <cf-input-group icon="lock" [invalid]="!!err('key')"><input cfInput id="key" formControlName="key" /></cf-input-group>
+            </cf-field>
+            <cf-field label="Distrito" for="district">
+              <cf-native-select>
+                <select cfSelect id="district" formControlName="district">
+                  <option value="centro">Centro</option><option value="leste">Distrito leste</option><option value="porto">Porto</option>
+                </select>
+              </cf-native-select>
+            </cf-field>
+            <cf-field label="Nível de acesso">
+              <cf-stepper label="Nível de acesso" formControlName="level" [min]="1" [max]="5" />
+            </cf-field>
+            <cf-field label="Visibilidade">
+              <cf-radio-group formControlName="access">
+                <cf-radio value="pub">Público</cf-radio><cf-radio value="priv">Privado</cf-radio><cf-radio value="ghost">Fantasma</cf-radio>
+              </cf-radio-group>
+            </cf-field>
+            <cf-slider label="Banda reservada" unit="%" formControlName="bandwidth" />
+            <cf-field label="Relatório" for="notes" class="full">
+              <cf-input-group multiline><textarea cfInput id="notes" formControlName="notes" placeholder="Observações"></textarea></cf-input-group>
+            </cf-field>
+            <div class="full demo-row" style="justify-content:space-between">
+              <div class="demo-col">
+                <cf-switch formControlName="notify">Notificações</cf-switch>
+                <cf-checkbox formControlName="terms">Aceito os protocolos da rede</cf-checkbox>
+                @if (err('terms'); as e) { <span class="cf-field__error">{{ e }}</span> }
+              </div>
+              <div class="demo-row">
+                <button cfButton variant="ghost" type="button" (click)="form.reset()">Limpar</button>
+                <button cfButton variant="solid" type="submit">Registrar</button>
+              </div>
+            </div>
+          </form>
+          <pre class="cf-micro" style="margin:0;white-space:pre-wrap">{{ form.getRawValue() | json }}</pre>
+        </cf-card>
+      </cf-tab-panel>
+    </cf-tabs>
+  </main>
+  <cf-toaster />
+</div>
