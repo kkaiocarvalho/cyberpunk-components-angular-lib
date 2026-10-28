@@ -818,7 +818,7 @@ Use com moderação: uma ou duas decorações por tela.
 
 ### Icon
 
-Kit próprio com mais de 50 ícones no traço angular do sistema: traço 1,6px e cantos chanfrados.
+Kit próprio com mais de 60 ícones no traço angular do sistema: traço 1,6px e cantos chanfrados.
 
 ```html
 <cf-icon name="radar" />
@@ -830,7 +830,8 @@ O tamanho segue o `font-size` (`1em`). Dentro de botões, abas, inputs e tiles o
 |---|---|
 | Interface | `grid` `menu` `more` `search` `filter` `sort` `gear` `close` `check` `plus` `minus` `edit` `copy` `link` `trash` `upload` `download` |
 | Navegação | `arrowRight` `arrowLeft` `chevronDown` `chevronRight` `home` `map` `pin` |
-| Status | `warn` `info` `bolt` `bell` `signal` `wifi` `power` `shield` `lock` `unlock` `eye` |
+| Status | `warn` `info` `bolt` `bell` `bellOff` `signal` `wifi` `power` `logout` `shield` `lock` `unlock` `eye` |
+| Chamadas | `phone` `phoneOff` `video` `videoOff` `mic` `micOff` `volume` |
 | Pessoas e comunicação | `user` `users` `chat` `mail` `calendar` `clock` |
 | Sistema | `chip` `plug` `terminal` `radar` `target` `file` `folder` |
 | Comércio | `cart` `credit` `heart` `star` |
