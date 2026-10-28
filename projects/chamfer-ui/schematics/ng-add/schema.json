@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "ChamferUiNgAdd",
+  "title": "Chamfer UI ng-add",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "Projeto onde o Chamfer UI será configurado.",
+      "$default": { "$source": "projectName" }
+    },
+    "fonts": {
+      "type": "boolean",
+      "default": true,
+      "description": "Adiciona as fontes Rajdhani, Orbitron e Share Tech Mono (Google Fonts) ao index.html.",
+      "x-prompt": "Adicionar as fontes do Google Fonts (Rajdhani, Orbitron, Share Tech Mono) ao index.html?"
+    },
+    "background": {
+      "type": "boolean",
+      "default": true,
+      "description": "Aplica o fundo com vinheta (cf-screen) no <body>.",
+      "x-prompt": "Aplicar o fundo cyberpunk com vinheta no <body>?"
+    }
+  },
+  "required": []
+}

@@ -13,6 +13,8 @@ Componentes standalone com signals, prontos para `ngModel` e Reactive Forms.
 ![Deps](https://img.shields.io/badge/dependências-0-1DED83?style=flat-square&labelColor=0E0E17)
 ![Border radius](https://img.shields.io/badge/border--radius-0px-F0B537?style=flat-square&labelColor=0E0E17)
 ![License](https://img.shields.io/badge/licença-MIT-D6D0D0?style=flat-square&labelColor=0E0E17)
+[![CI](https://github.com/kkaiocarvalho/cyberpunk-components-angular-lib/actions/workflows/ci.yml/badge.svg)](https://github.com/kkaiocarvalho/cyberpunk-components-angular-lib/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@kkaiocarvalho/chamfer-ui?style=flat-square&color=F75049&labelColor=0E0E17)](https://www.npmjs.com/package/@kkaiocarvalho/chamfer-ui)
 
 </div>
 
@@ -101,24 +103,30 @@ A linguagem visual foi extraída de um estudo da interface de *Cyberpunk 2077* (
 
 ## Instalação
 
-> O pacote ainda não está publicado no npm. Enquanto isso, instale a partir do build local (veja [Desenvolvimento](#desenvolvimento)).
+**Requisitos:** Angular 22 ou superior.
 
 ```bash
-# depois de publicado
-npm install @kkaiocarvalho/chamfer-ui
-
-# a partir deste repositório
-git clone https://github.com/kkaiocarvalho/cyberpunk-components-angular-lib.git
-cd cyberpunk-components-angular-lib && npm install && npm run pack:lib
-# no seu projeto:
-npm install ../cyberpunk-components-angular-lib/dist/chamfer-ui/kkaiocarvalho-chamfer-ui-0.1.0.tgz
+ng add @kkaiocarvalho/chamfer-ui
 ```
 
-**Requisitos:** Angular 22 ou superior (`@angular/core`, `common`, `forms` e `platform-browser`).
+Pronto. O `ng add` instala o pacote e configura o projeto:
 
-### 1. Registre o CSS
+| O que ele faz | Onde |
+|---|---|
+| Registra o `chamfer.css` como primeiro item de `styles` (build e test) | `angular.json` |
+| Adiciona as fontes Rajdhani, Orbitron e Share Tech Mono do Google Fonts | `<head>` do `index.html` |
+| Aplica `cf-root` (e `cf-screen`, opcional) no `<body>` | `index.html` |
 
-No `angular.json`, em `projects.<app>.architect.build.options`:
+Ele pergunta se você quer as fontes e o fundo com vinheta. Para pular as perguntas e aceitar o padrão, use `--defaults`. Em workspaces com mais de um app, informe `--project=<nome>`. Pode rodar de novo sem medo: nada é duplicado.
+
+<details>
+<summary><b>Instalação manual</b> (sem <code>ng add</code>)</summary>
+
+```bash
+npm install @kkaiocarvalho/chamfer-ui
+```
+
+**1. CSS:** no `angular.json`, em `projects.<app>.architect.build.options`:
 
 ```json
 "styles": [
@@ -127,9 +135,7 @@ No `angular.json`, em `projects.<app>.architect.build.options`:
 ]
 ```
 
-### 2. Carregue as fontes
-
-O sistema usa **Rajdhani** (UI), **Orbitron** (display) e **Share Tech Mono** (micro-texto), todas do Google Fonts. Adicione ao `index.html`:
+**2. Fontes:** no `<head>` do `index.html`:
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -138,15 +144,11 @@ O sistema usa **Rajdhani** (UI), **Orbitron** (display) e **Share Tech Mono** (m
   href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" />
 ```
 
-Se preferir, você pode incluir `styles/chamfer-fonts.css` no array `styles`. Se você hospeda as fontes por conta própria, basta declarar os `@font-face` com os mesmos nomes de família.
+Se você hospeda as fontes por conta própria, declare os `@font-face` com os mesmos nomes de família.
 
-### 3. Aplique a raiz
+**3. Raiz:** `<body class="cf-root cf-screen">`. O `cf-root` define a fonte, a cor e o fundo base; o `cf-screen` adiciona a vinheta de fundo e é opcional.
 
-```html
-<body class="cf-root cf-screen">
-```
-
-`cf-root` define a fonte, a cor e o fundo base. `cf-screen` adiciona a vinheta vermelha e ciano de fundo e é opcional.
+</details>
 
 ---
 
@@ -988,17 +990,52 @@ npm start            # builda a lib e sobe o app demo em http://localhost:4200
 | `npm run build` | Build de produção da lib e do demo |
 | `npm run build:lib` | Gera o pacote em `dist/chamfer-ui` (formato Angular Package Format) |
 | `npm run pack:lib` | Gera o `.tgz` instalável |
+| `npm run build:schematics` | Compila o schematic `ng add` (já incluído no `build:lib`) |
+| `npm run release -- <tipo>` | Sobe a versão, faz commit e cria a tag (veja abaixo) |
 | `npm test` | Testes da lib |
 
 O demo importa a lib por `@kkaiocarvalho/chamfer-ui`, mapeado no `tsconfig.json` para `dist/chamfer-ui`. Por isso a lib precisa estar buildada antes de subir o demo.
 
-**Publicar no npm:**
+### Testando o `ng add` localmente
 
 ```bash
-npm run build:lib
-cd dist/chamfer-ui
-npm publish --access public
+npm run pack:lib                       # gera dist/chamfer-ui/kkaiocarvalho-chamfer-ui-x.y.z.tgz
+cd ../algum-app-angular
+ng add ../cyberpunk-components-angular-lib/dist/chamfer-ui/kkaiocarvalho-chamfer-ui-x.y.z.tgz
 ```
+
+### Lançando uma versão
+
+A publicação no npm é automática. Quando uma tag `vX.Y.Z` chega ao GitHub, o workflow [`release.yml`](.github/workflows/release.yml):
+
+1. confere se a tag bate com a versão em `projects/chamfer-ui/package.json`;
+2. builda a lib e o schematic;
+3. publica no npm com [provenance](https://docs.npmjs.com/generating-provenance-statements) (o selo de "build verificado" no npmjs.com);
+4. cria a GitHub Release com as notas geradas a partir dos commits.
+
+Para lançar:
+
+```bash
+npm run release -- patch      # 0.1.0 → 0.1.1  (correções)
+npm run release -- minor      # 0.1.0 → 0.2.0  (componentes novos)
+npm run release -- major      # 0.1.0 → 1.0.0  (mudanças que quebram a API)
+npm run release -- prerelease # 0.1.1-next.0   (publicado na tag "next" do npm)
+git push --follow-tags
+```
+
+O script se recusa a rodar com alterações não commitadas e builda a lib antes de criar a tag.
+
+**Configuração inicial (uma vez só):**
+
+1. Crie uma conta em [npmjs.com](https://www.npmjs.com/signup) com o usuário `kkaiocarvalho` (o escopo `@kkaiocarvalho` é o seu usuário).
+2. Em **Access Tokens → Generate New Token → Granular Access Token**, crie um token com permissão de leitura e escrita para pacotes.
+3. No GitHub, em **Settings → Secrets and variables → Actions → New repository secret**, salve o token com o nome `NPM_TOKEN`.
+
+A primeira versão (`0.1.0`) já está no `package.json`. Para publicá-la, crie a tag direto: `git tag v0.1.0 && git push --tags`.
+
+### Integração contínua
+
+O workflow [`ci.yml`](.github/workflows/ci.yml) roda em todo push e PR. Ele builda a lib e o demo, gera o `.tgz` e, num app Angular criado do zero, roda o `ng add`, confere as alterações e builda o app usando os componentes. Se o `ng add` quebrar, o CI avisa antes de qualquer publicação.
 
 ### Criando um componente novo
 
@@ -1036,6 +1073,9 @@ npm publish --access public
 │   │           ├── navigation/      # Tile, Accordion
 │   │           └── decor/           # Avatar, Glitch, Divider, Skeleton, Spinner, Sysblock
 │   └── demo/                        # app de demonstração (componentes, painel, formulário)
+├── projects/chamfer-ui/schematics/   # schematic do ng add
+├── scripts/                         # release.mjs e cópia de assets do schematic
+├── .github/workflows/               # ci.yml e release.yml
 ├── docs/index.html                  # referência visual em HTML puro
 ├── vanilla/chamfer.js               # comportamentos para uso sem framework
 ├── angular.json
@@ -1046,15 +1086,17 @@ npm publish --access public
 
 ## Roadmap
 
-- [ ] Publicar `@kkaiocarvalho/chamfer-ui` no npm
+- [x] Pipeline de publicação no npm (tag → publish com provenance)
+- [ ] Primeira versão publicada no npm
 - [x] Demo e docs publicados na Vercel
 - [ ] Combobox com busca, Date picker, Paginação, Breadcrumb
 - [ ] Sidebar de aplicação e Command palette (`Ctrl+K`)
 - [ ] Drawer e File upload
 - [ ] Componentes de assinatura: HUD/minimapa, grade de hacking, terminal com digitação, transição de tela com glitch
 - [ ] Temas prontos (`civil`, `terminal-verde`, `ouro`)
+- [x] Schematic `ng add` (CSS, fontes e classes do `<body>`)
+- [x] CI com teste do `ng add` num app novo
 - [ ] Testes unitários por componente e testes visuais de regressão
-- [ ] Schematic `ng add @kkaiocarvalho/chamfer-ui` (registra o CSS e as fontes automaticamente)
 
 ---
 

@@ -40,5 +40,9 @@
   "homepage": "https://github.com/kkaiocarvalho/cyberpunk-components-angular-lib#readme",
   "bugs": {
     "url": "https://github.com/kkaiocarvalho/cyberpunk-components-angular-lib/issues"
+  },
+  "schematics": "./schematics/collection.json",
+  "ng-add": {
+    "save": "dependencies"
   }
 }

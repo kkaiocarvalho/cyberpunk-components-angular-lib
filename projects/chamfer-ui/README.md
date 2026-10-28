@@ -3,13 +3,10 @@
 Design system cyberpunk/FUI para Angular 22+: cantos chanfrados a 45°, linhas de 1px, componentes standalone com signals e suporte completo a formulários.
 
 ```bash
-npm install @kkaiocarvalho/chamfer-ui
+ng add @kkaiocarvalho/chamfer-ui
 ```
 
-```json
-// angular.json → styles
-"node_modules/@kkaiocarvalho/chamfer-ui/styles/chamfer.css"
-```
+O `ng add` registra o CSS no `angular.json`, adiciona as fontes ao `index.html` e aplica as classes do `<body>`.
 
 ```ts
 import { CHAMFER_UI } from '@kkaiocarvalho/chamfer-ui';

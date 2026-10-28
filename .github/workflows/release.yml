@@ -1,0 +1,50 @@
+name: Release
+
+# Publica no npm quando uma tag de versão (v1.2.3) é enviada.
+# Use: npm run release -- patch   (depois: git push --follow-tags)
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write   # criar a GitHub Release
+  id-token: write   # provenance do npm
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Confere se a tag bate com a versão da lib
+        run: |
+          PKG_VERSION=$(node -p "require('./projects/chamfer-ui/package.json').version")
+          if [ "v$PKG_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::A tag $GITHUB_REF_NAME não bate com a versão $PKG_VERSION em projects/chamfer-ui/package.json"
+            exit 1
+          fi
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Publica no npm
+        working-directory: dist/chamfer-ui
+        run: |
+          TAG=latest
+          case "$GITHUB_REF_NAME" in *-*) TAG=next;; esac
+          npm publish --access public --provenance --tag "$TAG"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Cria a GitHub Release
+        run: |
+          PRERELEASE=""
+          case "$GITHUB_REF_NAME" in *-*) PRERELEASE="--prerelease";; esac
+          gh release create "$GITHUB_REF_NAME" --generate-notes --title "$GITHUB_REF_NAME" $PRERELEASE
+        env:
+          GH_TOKEN: ${{ github.token }}

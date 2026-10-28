@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build da lib e do demo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Empacota a lib
+        run: npm pack --pack-destination ../..
+        working-directory: dist/chamfer-ui
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chamfer-ui-tgz
+          path: '*.tgz'
+          retention-days: 7
+
+  ng-add:
+    name: Testa o ng add num app novo
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      NG_CLI_ANALYTICS: 'false'
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: chamfer-ui-tgz
+      - name: Cria um app Angular limpo
+        run: npx -y @angular/cli@22 new smoke --defaults --style css --ssr false --skip-git --skip-tests
+      - name: Roda ng add com o pacote gerado
+        working-directory: smoke
+        run: npx ng add "$(ls ../*.tgz)" --skip-confirmation --defaults
+      - name: Confere o que o ng add alterou
+        working-directory: smoke
+        run: |
+          grep -q 'chamfer-ui/styles/chamfer.css' angular.json
+          grep -q 'family=Rajdhani' src/index.html
+          grep -q 'cf-root' src/index.html
+      - name: Usa os componentes e builda
+        working-directory: smoke
+        run: |
+          cat > src/app/app.ts <<'TS'
+          import { Component } from '@angular/core';
+          import { CHAMFER_UI } from '@kkaiocarvalho/chamfer-ui';
+          @Component({
+            selector: 'app-root',
+            imports: [CHAMFER_UI],
+            template: '<cf-card><button cfButton variant="solid">OK</button></cf-card>',
+          })
+          export class App {}
+          TS
+          rm -f src/app/app.html src/app/app.css
+          npx ng build

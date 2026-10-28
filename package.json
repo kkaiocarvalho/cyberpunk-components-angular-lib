@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "start": "npm run build:lib && ng serve demo",
-    "build:lib": "ng build chamfer-ui",
+    "build:lib": "ng build chamfer-ui && npm run build:schematics",
     "watch:lib": "ng build chamfer-ui --watch --configuration development",
     "build:demo": "ng build demo",
     "build": "npm run build:lib && npm run build:demo",
     "test": "ng test chamfer-ui",
-    "pack:lib": "npm run build:lib && cd dist/chamfer-ui && npm pack"
+    "pack:lib": "npm run build:lib && cd dist/chamfer-ui && npm pack",
+    "build:schematics": "tsc -p projects/chamfer-ui/tsconfig.schematics.json && node scripts/copy-schematic-assets.mjs",
+    "release": "node scripts/release.mjs"
   },
   "private": true,
   "packageManager": "npm@10.9.9",
