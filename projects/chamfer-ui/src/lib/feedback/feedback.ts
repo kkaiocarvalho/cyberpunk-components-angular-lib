@@ -86,7 +86,11 @@ export class CfToastService {
   selector: 'cf-toaster',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CfAlert],
-  host: { class: 'cf-toaster', role: 'region', 'aria-label': 'Notificações', 'aria-live': 'polite' },
+  host: {
+    class: 'cf-toaster', role: 'region', 'aria-label': 'Notificações', 'aria-live': 'polite',
+    '[class.cf-toaster--center]': "position() === 'center'",
+    '[class.cf-toaster--top]': "position() === 'top'",
+  },
   template: `
     @for (t of service.toasts(); track t.id) {
       <cf-alert [variant]="t.variant" [heading]="t.heading" dismissible (dismissed)="service.dismiss(t.id)"
@@ -96,6 +100,8 @@ export class CfToastService {
 })
 export class CfToaster {
   protected readonly service = inject(CfToastService);
+  /** Onde os avisos aparecem: canto inferior (padrão), centro da tela ou topo. */
+  readonly position = input<'bottom-end' | 'center' | 'top'>('bottom-end');
 }
 
 /* -------------------------------------------------------------------------- */

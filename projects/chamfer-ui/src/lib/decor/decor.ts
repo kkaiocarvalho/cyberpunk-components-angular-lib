@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, booleanAttribute, input, numberAttribute } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, numberAttribute } from '@angular/core';
 
 /** <cf-avatar initials="KS" online /> · <cf-avatar src="/foto.jpg" alt="Kestrel" [size]="64" /> */
 @Component({
@@ -26,19 +26,49 @@ export class CfGlitch {
   readonly text = input.required<string>();
 }
 
-/** <cf-divider variant="tick" /> */
+export type CfDividerVariant = 'solid' | 'dashed' | 'tick' | 'bracket-top' | 'bracket-bottom' | 'bracket-center' | 'dots' | 'razor';
+
+/**
+ * Separadores. Os "bracket" são as cantoneiras que abrem/fecham uma seção;
+ * "dots" é a faixa de pontos e "razor" a borda serrilhada.
+ *   <cf-divider variant="bracket-top" /> … conteúdo … <cf-divider variant="bracket-bottom" />
+ */
 @Component({
   selector: 'cf-divider',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'cf-divider', role: 'separator', style: 'display:block',
-    '[class.cf-divider--dashed]': "variant() === 'dashed'",
-    '[class.cf-divider--tick]': "variant() === 'tick'",
+    role: 'separator', style: 'display:block',
+    '[class]': 'cls()',
   },
   template: '',
 })
 export class CfDivider {
-  readonly variant = input<'solid' | 'dashed' | 'tick'>('solid');
+  readonly variant = input<CfDividerVariant>('solid');
+  readonly tone = input<'red' | 'cyan'>('red');
+  protected readonly cls = computed(() => {
+    const v = this.variant();
+    const tone = this.tone() === 'cyan' ? ' cf-tone-cyan' : '';
+    if (v.startsWith('bracket')) return `cf-rule cf-rule--${v.slice(8)}${tone}`;
+    if (v === 'dots') return `cf-dots${tone}`;
+    if (v === 'razor') return `cf-razor${tone}`;
+    return `cf-divider${v === 'solid' ? '' : ' cf-divider--' + v}`;
+  });
+}
+
+/**
+ * Linha de código decorativa acima de cards e listas:
+ *   <cf-decor code=".msg.thread_04" meta="28.10.2077" />
+ * Renderiza "/// .MSG.THREAD_04 ··· 28.10.2077" com régua e marca ciano.
+ */
+@Component({
+  selector: 'cf-decor',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'cf-decor', 'aria-hidden': 'true' },
+  template: `<span class="cf-decor__code">/// {{ code() }}</span><ng-content /><span class="cf-decor__meta">{{ meta() }}</span>`,
+})
+export class CfDecor {
+  readonly code = input('');
+  readonly meta = input('');
 }
 
 /** <cf-skeleton width="60%" /> */

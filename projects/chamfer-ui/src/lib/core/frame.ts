@@ -28,6 +28,8 @@ export class CfFrame {
   /** true = bracket vermelho; ou o nome de uma raridade para colorir. */
   readonly bracket = input<boolean | CfRarity | ''>(false);
   readonly notch = input(false, { transform: booleanAttribute });
+  /** Fenda horizontal no meio da borda esquerda (acabamento dos botões do jogo). */
+  readonly slot = input(false, { transform: booleanAttribute });
 
   protected readonly bracketRarity = computed(() => {
     const b = this.bracket();
@@ -42,6 +44,7 @@ export class CfFrame {
     const b = this.bracket();
     if (b === true || b === '' || typeof b === 'string') c.push('cf-bracket');
     if (this.notch()) c.push('cf-notch');
+    if (this.slot()) c.push('cf-slot');
     return c.join(' ');
   });
 }

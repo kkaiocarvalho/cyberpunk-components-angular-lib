@@ -286,6 +286,7 @@ A peça central do sistema: qualquer elemento ganha cantos cortados e contorno.
 | `interactive` | `boolean` | `false` | Ativa os quatro estados. |
 | `bracket` | `boolean \| CfRarity` | `false` | Adiciona o bracket; uma raridade define a cor. |
 | `notch` | `boolean` | `false` | Entalhe decorativo na borda esquerda. |
+| `slot` | `boolean` | `false` | Fenda horizontal no meio da borda esquerda, contornada pela linha (o acabamento dos botões do jogo). |
 
 **Como funciona:** o elemento em si não é recortado, então foco, glow e tooltips continuam funcionando. Duas pseudo-camadas fazem o desenho:
 
@@ -301,6 +302,7 @@ Como a linha é um anel, o fundo pode ser translúcido sem a linha aparecer por 
   --cf-tl: 16px; --cf-tr: 0px; --cf-br: 16px; --cf-bl: 0px;   /* cada canto */
   --cf-line: var(--cf-cyan);
   --cf-fill: rgb(25 23 34 / .9);
+  --cf-slot-w: 12px; --cf-slot-h: 2px;                        /* fenda na esquerda (0 = sem) */
 }
 ```
 
@@ -333,6 +335,8 @@ Como a linha é um anel, o fundo pode ser translúcido sem a linha aparecer por 
 | `pressed` | `boolean \| undefined` | `undefined` | Estado de toggle, vira `aria-pressed` |
 
 Todo clique dispara o **flash** de 140ms automaticamente.
+
+**Acabamento (v0.2):** o corte do canto inferior-direito é grande (≈30% da altura) e há uma **fenda** de 2px no meio da borda esquerda, como nos botões do jogo e do site oficial. Botões `icon`, `ghost` e `link` não têm fenda. Para tirar de um botão específico, use a classe `cf-btn--no-slot`.
 
 ### Button group
 
@@ -704,7 +708,13 @@ this.toast.show({ heading: 'Intrusão', body: 'Nó 0x1B07 bloqueado.', duration:
 | `clear()` | Fecha todos |
 | `toasts` | `signal` com a lista atual (útil para testes ou para um toaster próprio) |
 
-O toast entra deslizando e sai com glitch. O toaster é uma região `aria-live="polite"`.
+O toast entra deslizando e sai com glitch. O toaster é uma região `aria-live="polite"`. O fundo é opaco, para não misturar com o que está atrás.
+
+```html
+<cf-toaster position="center" />   <!-- 'bottom-end' (padrão) | 'center' | 'top' -->
+```
+
+No centro, o aviso abre como uma linha que se expande na vertical, como as notificações do jogo.
 
 ### Dialog
 
@@ -811,6 +821,12 @@ Use com moderação: uma ou duas decorações por tela.
 ```html
 <cf-glitch class="cf-h2" text="Sinal perdido" />      <!-- glitch RGB periódico -->
 <cf-divider variant="tick" />                          <!-- solid | dashed | tick -->
+<cf-decor code=".news.module_highlight" meta="28.10.2077" />  <!-- /// linha de código + régua -->
+<cf-divider variant="bracket-top" />                   <!-- ┌      ┐  abre uma seção -->
+<cf-divider variant="bracket-bottom" />                <!-- └      ┘  fecha a seção -->
+<cf-divider variant="bracket-center" tone="cyan" />    <!-- ──┬── marca central -->
+<cf-divider variant="dots" />                          <!-- faixa de pontos -->
+<cf-divider variant="razor" />                         <!-- borda serrilhada a 45° -->
 <cf-skeleton width="60%" height="12px" />              <!-- placeholder com shimmer -->
 <cf-spinner label="Carregando" />                      <!-- grade 3×3 piscando -->
 <cf-sysblock>Protocolo 2077-SAK<br />Acesso autorizado</cf-sysblock>
@@ -904,8 +920,9 @@ Disponíveis em qualquer template, com ou sem os componentes.
 | Layout | `cf-stack` (grid vertical), `cf-row` (flex com wrap), `cf-grid` (grade de itens) |
 | Chanfro | `cf-frame` + `cf-cut-{br,tl,tr,bl,diag,anti,all,none}` + `cf-cut-{xs,sm,md,lg,xl}` |
 | Linha e fundo | `cf-line-{hot,cyan,none}`, `cf-fill-{none,red,solid,cyan}` |
-| Detalhes | `cf-bracket` (+ `data-rarity`), `cf-notch`, `cf-interactive`, `cf-corners` + `cf-corner--{tl,tr,bl,br}` |
-| Decoração | `cf-divider`, `cf-divider--{dashed,tick}`, `cf-skeleton`, `cf-dot`, `cf-dot--pulse`, `cf-rail`, `cf-sysblock` |
+| Detalhes | `cf-bracket` (+ `data-rarity`), `cf-notch`, `cf-slot`, `cf-slot-lg`, `cf-cap`, `cf-cap-cyan`, `cf-interactive`, `cf-corners` + `cf-corner--{tl,tr,bl,br}` |
+| Decoração | `cf-divider`, `cf-divider--{dashed,tick}`, `cf-decor`, `cf-rule`, `cf-rule--{bottom,center}`, `cf-dots`, `cf-razor`, `cf-tone-cyan`, `cf-skeleton`, `cf-dot`, `cf-dot--pulse`, `cf-rail`, `cf-sysblock` |
+| Formulário | `cf-input-wrap--line` (só a linha de baixo) |
 
 ---
 

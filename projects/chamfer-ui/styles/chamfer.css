@@ -168,6 +168,8 @@
   --cf-line: var(--cf-line-idle);
   --cf-fill: var(--cf-fill-idle);
   --cf-inset-start: 0px;          /* espaço reservado para bracket */
+  --cf-slot-w: 0px;               /* fenda na borda esquerda (0 = sem fenda) */
+  --cf-slot-h: 2px;
   position: relative;
   isolation: isolate;
   transition: --cf-line var(--cf-base) var(--cf-ease), --cf-fill var(--cf-base) var(--cf-ease);
@@ -204,11 +206,16 @@
   position: absolute;
   z-index: -1;
   pointer-events: none;
+  --s-w: var(--cf-slot-w);
+  --s-h: calc(var(--cf-slot-h) / 2 + var(--cf-bw));
   clip-path: polygon(
     var(--k-tl) 0, calc(100% - var(--k-tr)) 0,
     100% var(--k-tr), 100% calc(100% - var(--k-br)),
     calc(100% - var(--k-br)) 100%, var(--k-bl) 100%,
-    0 calc(100% - var(--k-bl)), 0 var(--k-tl)
+    0 calc(100% - var(--k-bl)),
+    0 calc(50% + var(--s-h)), var(--s-w) calc(50% + var(--s-h)),
+    var(--s-w) calc(50% - var(--s-h)), 0 calc(50% - var(--s-h)),
+    0 var(--k-tl)
   );
 }
 .cf-frame::before,
@@ -231,18 +238,26 @@
   --i-br: max(0px, calc(var(--cf-br) - var(--cf-bw) * .586));
   --i-bl: max(0px, calc(var(--cf-bl) - var(--cf-bw) * .586));
   --b: var(--cf-bw);
+  --sh: calc(var(--cf-slot-h) / 2);
+  --sw: var(--cf-slot-w);
   inset: 0 0 0 var(--cf-inset-start);
   background: var(--cf-line);
   z-index: -2;
-  /* anel: contorno externo + furo interno (evenodd), para o fundo poder ser translúcido */
+  /* anel: contorno externo + furo interno (evenodd), para o fundo poder ser translúcido.
+     A fenda (slot) é um entalhe horizontal na borda esquerda, contornado pela linha. */
   clip-path: polygon(evenodd,
     var(--k-tl) 0, calc(100% - var(--k-tr)) 0, 100% var(--k-tr), 100% calc(100% - var(--k-br)),
-    calc(100% - var(--k-br)) 100%, var(--k-bl) 100%, 0 calc(100% - var(--k-bl)), 0 var(--k-tl), var(--k-tl) 0,
+    calc(100% - var(--k-br)) 100%, var(--k-bl) 100%, 0 calc(100% - var(--k-bl)),
+    0 calc(50% + var(--sh)), var(--sw) calc(50% + var(--sh)), var(--sw) calc(50% - var(--sh)), 0 calc(50% - var(--sh)),
+    0 var(--k-tl), var(--k-tl) 0,
     calc(var(--b) + var(--i-tl)) var(--b),
     calc(var(--b) + var(--i-tl)) var(--b), calc(100% - var(--b) - var(--i-tr)) var(--b),
     calc(100% - var(--b)) calc(var(--b) + var(--i-tr)), calc(100% - var(--b)) calc(100% - var(--b) - var(--i-br)),
     calc(100% - var(--b) - var(--i-br)) calc(100% - var(--b)), calc(var(--b) + var(--i-bl)) calc(100% - var(--b)),
-    var(--b) calc(100% - var(--b) - var(--i-bl)), var(--b) calc(var(--b) + var(--i-tl)),
+    var(--b) calc(100% - var(--b) - var(--i-bl)),
+    var(--b) calc(50% + var(--sh) + var(--b)), calc(var(--sw) + var(--b)) calc(50% + var(--sh) + var(--b)),
+    calc(var(--sw) + var(--b)) calc(50% - var(--sh) - var(--b)), var(--b) calc(50% - var(--sh) - var(--b)),
+    var(--b) calc(var(--b) + var(--i-tl)),
     calc(var(--b) + var(--i-tl)) var(--b), var(--k-tl) 0);
 }
 .cf-frame::after,
@@ -335,7 +350,9 @@
    5. BUTTON
    ========================================================================== */
 .cf-btn {
-  --cf-tl: 0px; --cf-tr: 0px; --cf-bl: 0px; --cf-br: var(--cf-cut-sm);
+  /* corte grande (≈30% da altura) + fenda na esquerda: o acabamento dos botões do jogo */
+  --cf-tl: 0px; --cf-tr: 0px; --cf-bl: 0px; --cf-br: 12px;
+  --cf-slot-w: 8px;
   --cf-line: var(--cf-line-idle);
   --cf-fill: rgb(58 20 24 / .55);
   display: inline-flex; align-items: center; justify-content: center; gap: var(--cf-s2);
@@ -368,15 +385,17 @@
 .cf-btn--link:hover { --cf-fill: transparent; --cf-line: transparent; text-decoration-color: currentColor; }
 
 /* Tamanhos */
-.cf-btn--sm { min-height: 30px; padding: 0 var(--cf-s3); font-size: var(--cf-text-xs); --cf-br: var(--cf-cut-xs); }
-.cf-btn--lg { min-height: 52px; padding: 0 var(--cf-s6); font-size: var(--cf-text-md); --cf-br: var(--cf-cut-md); }
-.cf-btn--icon { padding: 0; width: 40px; }
-.cf-btn--icon.cf-btn--sm { width: 30px; }
+.cf-btn--sm { min-height: 30px; padding: 0 var(--cf-s3); font-size: var(--cf-text-xs); --cf-br: 8px; --cf-slot-w: 5px; }
+.cf-btn--lg { min-height: 52px; padding: 0 var(--cf-s6); font-size: var(--cf-text-md); --cf-br: 16px; --cf-slot-w: 10px; }
+.cf-btn--icon { padding: 0; width: 40px; --cf-br: 10px; --cf-slot-w: 0px; }
+.cf-btn--icon.cf-btn--sm { width: 30px; --cf-br: 7px; }
+.cf-btn--link, .cf-btn--ghost, .cf-btn--no-slot { --cf-slot-w: 0px; }
 .cf-btn--block { display: flex; width: 100%; }
 
 /* Grupo segmentado (abas tipo GUNS | MISC) */
 .cf-btn-group { display: inline-flex; gap: 2px; }
 .cf-btn-group > .cf-btn:not(:last-child) { --cf-br: 0px; }
+.cf-btn-group > .cf-btn:not(:first-child) { --cf-slot-w: 0px; }
 
 /* ==========================================================================
    6. KBD / BUTTON HINT
@@ -466,7 +485,7 @@
 .cf-field__error { font-size: var(--cf-text-xs); font-weight: 600; color: var(--cf-orange); text-transform: uppercase; letter-spacing: var(--cf-track); }
 
 .cf-input-wrap {
-  --cf-tl: 0px; --cf-tr: 0px; --cf-bl: 0px; --cf-br: var(--cf-cut-sm);
+  --cf-tl: 0px; --cf-tr: 0px; --cf-bl: 0px; --cf-br: 10px;
   --cf-line: var(--cf-line-idle);
   --cf-fill: rgb(14 14 23 / .85);
   display: flex; align-items: center; gap: var(--cf-s2);
@@ -705,7 +724,7 @@
 /* ==========================================================================
    19. MENU / DROPDOWN
    ========================================================================== */
-.cf-menu { --cf-tl: 0px; --cf-tr: 0px; --cf-bl: 0px; --cf-br: var(--cf-cut-sm); --cf-line: var(--cf-red); --cf-fill: rgb(19 18 29 / .98); display: grid; padding: 4px; min-width: 200px; }
+.cf-menu { border-top: 4px solid var(--cf-red); --cf-tl: 0px; --cf-tr: 0px; --cf-bl: 0px; --cf-br: var(--cf-cut-sm); --cf-line: var(--cf-red); --cf-fill: rgb(19 18 29 / .98); display: grid; padding: 4px; min-width: 200px; }
 .cf-menu__item { display: flex; align-items: center; gap: var(--cf-s2); padding: 8px 10px; border: 0; background: none; text-align: left; cursor: pointer; font: 600 var(--cf-text-sm)/1.1 var(--cf-font); text-transform: uppercase; letter-spacing: var(--cf-track); color: var(--cf-red); border-left: 2px solid transparent; }
 .cf-menu__item:hover, .cf-menu__item:focus-visible { outline: none; background: rgb(94 246 255 / .08); color: var(--cf-cyan); border-left-color: var(--cf-cyan); }
 .cf-menu__item .cf-kbd { margin-left: auto; height: 18px; font-size: 10px; }
@@ -843,3 +862,76 @@ cf-icon > svg { width: 100%; height: 100%; display: block; }
 /* Radio group */
 .cf-radio-group { display: flex; flex-wrap: wrap; gap: var(--cf-s4); }
 .cf-radio-group--col { flex-direction: column; gap: var(--cf-s2); }
+
+/* ==========================================================================
+   25. ACABAMENTO (v0.2) — detalhes de borda tirados do site e do jogo
+   ========================================================================== */
+/* Fenda: entalhe horizontal no meio da borda esquerda, contornado pela linha */
+.cf-slot { --cf-slot-w: 10px; }
+.cf-slot-lg { --cf-slot-w: 16px; --cf-slot-h: 3px; }
+
+/* Tampa: barra grossa no topo (menus, painéis suspensos) */
+.cf-cap { border-top: 4px solid var(--cf-cap-color, var(--cf-red)); }
+.cf-cap-cyan { --cf-cap-color: var(--cf-cyan); }
+
+/* Input só com linha inferior (formulário de newsletter) */
+.cf-input-wrap--line { --cf-line: transparent; --cf-fill: transparent; padding: 0 2px; border-bottom: 2px solid rgb(247 80 73 / .6); }
+.cf-input-wrap--line:hover { --cf-line: transparent; border-bottom-color: var(--cf-red); }
+.cf-input-wrap--line:focus-within { --cf-line: transparent; --cf-fill: transparent; border-bottom-color: var(--cf-cyan); }
+
+/* Linha de código decorativa: /// .modulo.nome ········· meta */
+.cf-decor {
+  display: flex; align-items: baseline; gap: var(--cf-s3); min-width: 0; padding-bottom: 5px;
+  font: 400 11px/1 var(--cf-font-mono); letter-spacing: .06em; text-transform: uppercase;
+  background:
+    linear-gradient(var(--cf-cyan), var(--cf-cyan)) left bottom / 28px 2px no-repeat,
+    linear-gradient(rgb(247 80 73 / .28), rgb(247 80 73 / .28)) left calc(100% - .5px) / 100% 1px no-repeat;
+}
+.cf-decor__code { color: var(--cf-cyan); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.cf-decor__meta { margin-left: auto; color: var(--cf-fg-dim); white-space: nowrap; }
+
+/* Cantoneiras de seção: ┌      ┐  /  └      ┘  (+ marca central opcional) */
+.cf-rule {
+  --c: var(--cf-rule-color, rgb(247 80 73 / .7)); --arm: 24px; --t: 2px;
+  display: block; height: 14px;
+  background:
+    linear-gradient(var(--c), var(--c)) left  top / var(--arm) var(--t) no-repeat,
+    linear-gradient(var(--c), var(--c)) right top / var(--arm) var(--t) no-repeat,
+    linear-gradient(var(--c), var(--c)) left  top / var(--t) 100% no-repeat,
+    linear-gradient(var(--c), var(--c)) right top / var(--t) 100% no-repeat;
+}
+.cf-rule--bottom { background-position: left bottom, right bottom, left top, right top; }
+.cf-rule--center {
+  background:
+    linear-gradient(var(--c), var(--c)) center top / calc(var(--arm) * 2) var(--t) no-repeat,
+    linear-gradient(var(--c), var(--c)) center top / var(--t) 100% no-repeat,
+    linear-gradient(rgb(247 80 73 / .25), rgb(247 80 73 / .25)) left top / 100% 1px no-repeat;
+}
+
+/* Faixa de pontos */
+.cf-dots {
+  display: block; height: 6px;
+  background: radial-gradient(circle, var(--cf-dot-color, rgb(247 80 73 / .55)) 1px, transparent 1.6px) 0 50% / 7px 6px repeat-x;
+  -webkit-mask: linear-gradient(90deg, #000 60%, transparent); mask: linear-gradient(90deg, #000 60%, transparent);
+}
+
+/* Borda serrilhada (perfil de "lâmina"): base sólida com degraus a 45° */
+.cf-razor {
+  display: block; height: 12px; background: var(--cf-razor-color, rgb(247 80 73 / .55));
+  clip-path: polygon(
+    0 100%, 0 8px, 14% 8px, calc(14% + 6px) 2px, 30% 2px, calc(30% + 3px) 5px, 46% 5px,
+    calc(46% + 5px) 0, 57% 0, calc(57% + 5px) 5px, 72% 5px, calc(72% + 3px) 8px, 86% 8px,
+    calc(86% + 4px) 4px, 93% 4px, calc(93% + 4px) 8px, 100% 8px, 100% 100%);
+}
+
+/* Tom ciano para os decorativos */
+.cf-tone-cyan { --cf-rule-color: rgb(94 246 255 / .75); --cf-dot-color: rgb(94 246 255 / .6); --cf-razor-color: rgb(94 246 255 / .5); }
+
+/* Avisos (toast): fundo opaco por cima do conteúdo + posições */
+.cf-toaster > .cf-alert::after { background: linear-gradient(var(--cf-fill), var(--cf-fill)), var(--cf-surface); }
+.cf-toaster > .cf-alert { filter: drop-shadow(0 6px 18px rgb(0 0 0 / .55)); }
+.cf-toaster--center { top: 50%; bottom: auto; left: 50%; right: auto; transform: translate(-50%, -50%); }
+.cf-toaster--center > * { animation-name: cf-toast-pop; }
+.cf-toaster--top { top: calc(16px + env(safe-area-inset-top, 0px)); bottom: auto; left: 50%; right: auto; transform: translateX(-50%); }
+@keyframes cf-toast-pop { 0% { opacity: 0; transform: scaleY(.04); } 40% { opacity: 1; transform: scaleY(.04); } 100% { transform: none; } }
+cf-decor { display: flex; }

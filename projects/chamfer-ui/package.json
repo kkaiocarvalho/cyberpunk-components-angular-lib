@@ -1,6 +1,6 @@
 {
   "name": "@kkaiocarvalho/chamfer-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Design system cyberpunk/FUI para Angular: cantos chanfrados, linhas finas, componentes standalone com signals.",
   "keywords": [
     "angular",
