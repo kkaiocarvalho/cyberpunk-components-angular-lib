@@ -1027,11 +1027,25 @@ O script se recusa a rodar com alterações não commitadas e builda a lib antes
 
 **Configuração inicial (uma vez só):**
 
-1. Crie uma conta em [npmjs.com](https://www.npmjs.com/signup) com o usuário `kkaiocarvalho` (o escopo `@kkaiocarvalho` é o seu usuário).
-2. Em **Access Tokens → Generate New Token → Granular Access Token**, crie um token com permissão de leitura e escrita para pacotes.
-3. No GitHub, em **Settings → Secrets and variables → Actions → New repository secret**, salve o token com o nome `NPM_TOKEN`.
+O workflow usa [Trusted Publishing](https://docs.npmjs.com/trusted-publishers): o GitHub Actions se autentica no npm via OIDC, sem nenhum token salvo no repositório. Como o npm só permite configurar isso num pacote que já existe, a primeira versão é publicada da sua máquina:
 
-A primeira versão (`0.1.0`) já está no `package.json`. Para publicá-la, crie a tag direto: `git tag v0.1.0 && git push --tags`.
+```bash
+npm login                          # usuário kkaiocarvalho, com 2FA
+npm ci && npm run build:lib
+cd dist/chamfer-ui
+npm publish --access public        # vai pedir o código do 2FA
+```
+
+Depois, em [npmjs.com](https://www.npmjs.com) → pacote `@kkaiocarvalho/chamfer-ui` → **Settings → Trusted Publisher → GitHub Actions**, preencha:
+
+| Campo | Valor |
+|---|---|
+| Organization or user | `kkaiocarvalho` |
+| Repository | `cyberpunk-components-angular-lib` |
+| Workflow filename | `release.yml` |
+| Environment | (deixe vazio) |
+
+Por fim, crie a tag da versão já publicada: `git tag v0.1.0 && git push --tags`. O workflow vê que a `0.1.0` já está no npm, pula a publicação e cria a GitHub Release. Daí em diante, cada `npm run release` publica sozinho, com provenance.
 
 ### Integração contínua
 
