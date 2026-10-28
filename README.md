@@ -6,6 +6,8 @@
 Cantos chanfrados a 45°, linhas de 1px, vermelho como cor de sistema e ciano como destaque.
 Componentes standalone com signals, prontos para `ngModel` e Reactive Forms.
 
+**[▶ Demo ao vivo](https://cyberpunk-components-angular-lib.vercel.app)** · **[Referência HTML](https://cyberpunk-components-angular-lib.vercel.app/docs)**
+
 ![Angular](https://img.shields.io/badge/Angular-22-F75049?style=flat-square&labelColor=0E0E17)
 ![Standalone](https://img.shields.io/badge/standalone-signals-5EF6FF?style=flat-square&labelColor=0E0E17)
 ![Deps](https://img.shields.io/badge/dependências-0-1DED83?style=flat-square&labelColor=0E0E17)
@@ -1045,7 +1047,7 @@ npm publish --access public
 ## Roadmap
 
 - [ ] Publicar `@kkaiocarvalho/chamfer-ui` no npm
-- [ ] Demo e docs no GitHub Pages
+- [x] Demo e docs publicados na Vercel
 - [ ] Combobox com busca, Date picker, Paginação, Breadcrumb
 - [ ] Sidebar de aplicação e Command palette (`Ctrl+K`)
 - [ ] Drawer e File upload
