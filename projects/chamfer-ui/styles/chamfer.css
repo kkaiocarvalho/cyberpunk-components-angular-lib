@@ -1004,7 +1004,7 @@ cf-decor { display: flex; }
 }
 
 /* Glitch de entrada (uma vez): troca de aba, de tela, item novo */
-.cf-glitch-in, .cf-tab-panel:not([hidden]) { animation: cf-glitch-in 300ms steps(6) both; }
+.cf-glitch-in, .cf-tab-panel:not([hidden]) { animation: cf-glitch-in 300ms steps(6) backwards; }
 @keyframes cf-glitch-in {
   0%   { opacity: 0; transform: translateX(-6px); clip-path: inset(0 0 70% 0); text-shadow: 3px 0 rgb(var(--cf-cyan-rgb) / .8), -3px 0 rgb(var(--cf-red-rgb) / .8); }
   20%  { opacity: 1; transform: translateX(5px); clip-path: inset(45% 0 20% 0); }
@@ -1118,7 +1118,7 @@ cf-decor { display: flex; }
 .cf-objective__step.is-done { color: var(--cf-fg-dim); text-decoration: line-through; text-decoration-color: rgb(var(--cf-grey-rgb) / .4); }
 .cf-objective__step.is-done::before { background: var(--cf-gold); }
 .cf-objective__step.is-optional { color: rgb(var(--cf-grey-rgb) / .75); font-style: italic; }
-.cf-objective--updated .cf-objective__head { animation: cf-glitch-in 300ms steps(6) both, cf-pulse 900ms 300ms 2; }
+.cf-objective--updated .cf-objective__head { animation: cf-glitch-in 300ms steps(6) backwards, cf-pulse 900ms 300ms 2; }
 
 /* Aviso de recompensa (+XP, item recebido) — variante de alerta/toast */
 .cf-alert--reward {
