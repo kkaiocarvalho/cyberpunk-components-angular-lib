@@ -1,4 +1,4 @@
-<div class="shell">
+<div class="shell" [attr.data-cf-theme]="theme() === 'default' ? null : theme()">
   <header class="topbar">
     <span class="brand"><span class="brand__mark" aria-hidden="true"></span>CHAMFER UI</span>
     <cf-badge variant="cyan">Angular</cf-badge>
@@ -16,6 +16,7 @@
         <button cfTab value="components" icon="grid">Componentes</button>
         <button cfTab value="dashboard" icon="radar">Painel</button>
         <button cfTab value="form" icon="edit">Formulário</button>
+        <button cfTab value="game" icon="target">Jogo</button>
       </cf-tab-list>
 
       <!-- ============================ COMPONENTES ============================ -->
@@ -264,7 +265,76 @@
           <pre class="cf-micro" style="margin:0;white-space:pre-wrap">{{ form.getRawValue() | json }}</pre>
         </cf-card>
       </cf-tab-panel>
+      <!-- =============================== JOGO =============================== -->
+      <cf-tab-panel value="game">
+        <div class="section">
+          <cf-section-header heading="Tema e textura" icon="gear" description="Os temas trocam só tokens; tudo o mais se adapta." />
+          <div class="demo-row">
+            <cf-button-group>
+              @for (t of themes; track t.id) {
+                <button cfButton size="sm" [attr.aria-pressed]="theme() === t.id" (click)="theme.set(t.id)">{{ t.label }}</button>
+              }
+            </cf-button-group>
+            <cf-switch [(checked)]="fxScan">Scanlines</cf-switch>
+            <cf-switch [(checked)]="fxGrain">Granulado</cf-switch>
+            <cf-switch [(checked)]="fxVignette">Vinheta</cf-switch>
+          </div>
+          <h2 class="cf-h1 cf-chroma cf-chroma--live" style="margin:8px 0 0"><span [cfDecode]="title()"></span></h2>
+          <div class="demo-row"><button cfButton variant="cyan" size="sm" (click)="nextTitle()">Decodificar outro</button></div>
+        </div>
+
+        <div class="section">
+          <cf-section-header heading="Status" icon="heart" description="Dano aparece branco e escorre; abaixo de 25% a barra pisca." />
+          <div class="demo-grid">
+            <cf-health label="Saúde" [value]="hp()" [max]="420" thick />
+            <cf-health label="Escudo" tone="cyan" [value]="shieldHp()" [max]="200" [cells]="20" />
+          </div>
+          <div class="demo-row">
+            <button cfButton size="sm" (click)="hit()">Tomar dano</button>
+            <button cfButton size="sm" variant="cyan" (click)="heal()">Curar</button>
+            <span class="cf-label">RAM</span><cf-segments [total]="10" [value]="ram()" tone="cyan" cells style="width:180px" />
+            <button cfButton size="sm" variant="ghost" (click)="ram.set(ram() > 2 ? ram() - 3 : 10)">Usar hack</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <cf-section-header heading="Diálogo e missão" icon="chat" description="Setas ↑↓ e números escolhem a opção." />
+          <div class="demo-grid">
+            <cf-card cfBoot>
+              <cf-choices speaker="Jackie Welles" (choose)="choice($event)">
+                <button cfChoice key="1" kind="main">Bora pegar o serviço.</button>
+                <button cfChoice key="2">Quem é o cliente?</button>
+                <button cfChoice key="3" kind="visited">Quanto paga?</button>
+                <button cfChoice key="4" tag="Frio 8" kind="locked">[Intimidar] Vai dobrar o preço.</button>
+                <button cfChoice key="5" kind="exit">[Sair]</button>
+              </cf-choices>
+            </cf-card>
+            <cf-card cfBoot [bootDelay]="120">
+              <cf-objective heading="O Assalto" distance="1,2 km" [updated]="objUpdated()" [steps]="steps()" />
+            </cf-card>
+          </div>
+        </div>
+
+        <div class="section">
+          <cf-section-header heading="Boot em sequência" icon="power" description="Cada painel desenha a borda ao aparecer (cfBoot ou cf-boot)." />
+          <div class="demo-row">
+            <button cfButton size="sm" (click)="reboot()">Rodar de novo</button>
+            <button cfButton size="sm" variant="gold" (click)="toast.reward('+250 XP', 'Reputação de rua')">Recompensa</button>
+          </div>
+          @if (bootKey()) {
+            <div class="demo-grid cf-boot-stagger">
+              @for (n of [1, 2, 3, 4]; track n) {
+                <div class="cf-card cf-boot cf-fx-scan" style="padding:16px">
+                  <cf-decor [code]="'.sys.node_0' + n" meta="ONLINE" />
+                  <p class="cf-p" style="margin:8px 0 0">Módulo {{ n }} sincronizado.</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </cf-tab-panel>
     </cf-tabs>
   </main>
   <cf-toaster />
+  <cf-fx-overlay [scan]="fxScan()" [grain]="fxGrain()" [vignette]="fxVignette()" />
 </div>

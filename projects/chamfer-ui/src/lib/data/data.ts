@@ -54,6 +54,7 @@ export class CfProgress {
     class: 'cf-segments',
     role: 'meter',
     '[class.cf-segments--cyan]': "tone() === 'cyan'",
+    '[class.cf-segments--cells]': 'cells()',
     '[style.--n]': 'total()',
     '[attr.aria-valuenow]': 'value()',
     '[attr.aria-valuemax]': 'total()',
@@ -65,6 +66,8 @@ export class CfSegments {
   readonly total = input(10, { transform: numberAttribute });
   readonly value = input(0, { transform: numberAttribute });
   readonly tone = input<'red' | 'cyan'>('red');
+  /** Células em paralelogramo, como a RAM do cyberdeck. */
+  readonly cells = input(false, { transform: booleanAttribute });
   protected readonly segs = computed(() => Array.from({ length: this.total() }, (_, i) => i < this.value()));
 }
 

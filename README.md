@@ -47,6 +47,10 @@ Componentes standalone com signals, prontos para `ngModel` e Reactive Forms.
   - [Tile](#tile) · [Accordion](#accordion)
   - [Avatar](#avatar) · [Decoração](#decoração)
   - [Icon](#icon)
+- [Componentes do jogo](#componentes-do-jogo)
+  - [Health](#health) · [Opções de diálogo](#opções-de-diálogo) · [Objetivo](#objetivo) · [Recompensa](#recompensa)
+- [Movimento](#movimento)
+- [Textura e luz](#textura-e-luz)
 - [Formulários](#formulários)
 - [Classes CSS utilitárias](#classes-css-utilitárias)
 - [Temas e customização](#temas-e-customização)
@@ -599,7 +603,7 @@ Barra segmentada (vida, munição, carga).
 <cf-segments [total]="5" [value]="3" tone="cyan" />
 ```
 
-Inputs: `total` (10), `value` (0), `tone` (`'red' | 'cyan'`). Usa `role="meter"`.
+Inputs: `total` (10), `value` (0), `tone` (`'red' | 'cyan'`), `cells` (células em paralelogramo, como a RAM do cyberdeck). Usa `role="meter"`.
 
 ### Stat
 
@@ -857,6 +861,107 @@ Para adicionar ícones, edite `CF_ICONS` em `projects/chamfer-ui/src/lib/icon/ic
 
 ---
 
+## Componentes do jogo
+
+Peças que só existem na interface do jogo. Todas seguem os tokens e funcionam nos [temas](#temas-e-customização).
+
+### Health
+
+Barra de vida/energia em células. Quando o valor cai, o pedaço perdido fica **branco** por um instante e depois escorre. Abaixo de 25% a barra pisca.
+
+```html
+<cf-health label="Saúde" [value]="hp()" [max]="420" thick />
+<cf-health label="Escudo" tone="cyan" [value]="escudo()" [max]="200" [cells]="20" />
+```
+
+Inputs: `value`, `max` (100), `label`, `tone` (`'red' | 'cyan' | 'mint'`), `cells` (10), `thick`, `showValue` (true), `lowAt` (0.25; 0 desliga o piscar). Usa `role="meter"`.
+
+### Opções de diálogo
+
+As escolhas de conversa. Opção principal em dourado, já vista em cinza, bloqueada com a exigência ao lado, saída em vermelho. A selecionada vira uma faixa dourada. `↑` `↓` navegam e os números escolhem.
+
+```html
+<cf-choices speaker="Jackie Welles" (choose)="responder($event)">
+  <button cfChoice key="1" kind="main">Bora pegar o serviço.</button>
+  <button cfChoice key="2">Quem é o cliente?</button>
+  <button cfChoice key="3" kind="visited">Quanto paga?</button>
+  <button cfChoice key="4" kind="locked" tag="Frio 8">[Intimidar] Vai dobrar o preço.</button>
+  <button cfChoice key="5" kind="exit">[Sair]</button>
+</cf-choices>
+```
+
+| Input | Em | Descrição |
+|---|---|---|
+| `key` | `cfChoice` | Número mostrado e atalho de teclado. |
+| `kind` | `cfChoice` | `'default' \| 'main' \| 'visited' \| 'locked' \| 'exit'`. `locked` não pode ser escolhida. |
+| `tag` | `cfChoice` | Exigência ou atributo (ex.: `Frio 8`). |
+| `speaker` | `cf-choices` | Nome de quem fala, acima das opções. |
+| `globalKeys` | `cf-choices` | Os números funcionam na página toda (telas só de diálogo). |
+
+Output: `(choose)` emite a `key` escolhida.
+
+### Objetivo
+
+O rastreador de missão do canto da tela.
+
+```html
+<cf-objective heading="O Assalto" distance="1,2 km" [updated]="acabouDeMudar()"
+  [steps]="[{ text: 'Encontre Dex', done: true }, { text: 'Fale com Jackie' }, { text: 'Compre um deck', optional: true }]" />
+```
+
+Passe `[updated]="true"` por um instante para o título piscar com glitch (missão atualizada).
+
+### Recompensa
+
+Variante `reward` do alerta/toast: dourada, entra deslizando da esquerda com inclinação.
+
+```ts
+this.toast.reward('+250 XP', 'Reputação de rua');
+// ou: this.toast.show({ heading: 'Item recebido', body: 'Braço Gorila', variant: 'reward' });
+```
+
+---
+
+## Movimento
+
+Tudo aqui desliga sozinho quando o sistema pede **movimento reduzido**.
+
+| Efeito | Como usar | O que faz |
+|---|---|---|
+| Varredura no hover | automático em `cfButton`, `cfTile`, `cfItem`, `cfChoice`, `.cf-interactive`; em qualquer moldura com `.cf-sweep` | Uma faixa de luz atravessa o fundo uma vez ao passar o mouse; a fenda do botão pisca. |
+| Boot | `<cf-card cfBoot>` (espera aparecer na tela) ou a classe `cf-boot` | A linha da borda se desenha, o fundo acende e o conteúdo pisca. `[bootDelay]="120"` atrasa. |
+| Boot em sequência | `cf-boot-stagger` no pai de vários `cf-boot` | Cada filho entra 70 ms depois do anterior. |
+| Dialog | automático | O painel do `<cf-dialog>` entra com boot. |
+| Glitch de entrada | automático nas abas (`cf-tab-panel`); classe `cf-glitch-in` em qualquer elemento | Corte com RGB separado por 300 ms. |
+| Decodificar | `<span [cfDecode]="texto"></span>` | Os caracteres embaralham e se fixam da esquerda para a direita. Roda de novo quando o texto muda. `[decodeDuration]` em ms (650). Leitores de tela recebem o texto final. |
+
+```html
+<div class="cf-boot-stagger">
+  <div class="cf-card cf-boot">…</div>
+  <div class="cf-card cf-boot">…</div>
+</div>
+<h1 class="cf-h1"><span [cfDecode]="nomeDoItem()"></span></h1>
+```
+
+---
+
+## Textura e luz
+
+| Classe / componente | Efeito |
+|---|---|
+| `cf-fx-scan` | Scanlines dentro do fundo de uma moldura. |
+| `cf-fx-grain` | Granulado dentro do fundo de uma moldura. |
+| `cf-neon`, `cf-neon-cyan`, `cf-neon-gold` | Brilho que segue o formato chanfrado (usa `drop-shadow`, que respeita o recorte). |
+| `cf-chroma` | Aberração cromática em títulos grandes. `cf-chroma--live` treme de leve a cada poucos segundos. |
+| `<cf-fx-overlay scan grain vignette flicker />` | Camada de tela inteira, por cima de tudo, sem bloquear cliques. Opacidades em `--cf-fx-scan-opacity` e `--cf-fx-grain-opacity`. |
+
+```html
+<cf-card class="cf-fx-scan cf-neon-cyan">…</cf-card>
+<cf-fx-overlay scan vignette />
+```
+
+---
+
 ## Formulários
 
 Todos os controles de valor implementam `ControlValueAccessor` e também expõem `model()`. Os três estilos funcionam:
@@ -928,7 +1033,40 @@ Disponíveis em qualquer template, com ou sem os componentes.
 
 ## Temas e customização
 
-Todo o sistema lê os tokens, então um tema novo é só sobrescrever variáveis. Exemplo de um tema **ciano** (para uma interface "civil" em vez de "militar"):
+### Temas prontos
+
+Coloque `data-cf-theme` no `<html>`, no `<body>` ou em qualquer seção. Só os tokens mudam; componentes, estados e efeitos se adaptam sozinhos.
+
+| Tema | Visual |
+|---|---|
+| *(nenhum)* | Interface do jogo: vermelho e ciano sobre azul-quase-preto. |
+| `yellow` | O site oficial: interface preta sobre amarelo `#FCEE0A`, destaque vermelho, botão sólido preto com texto amarelo. |
+| `netrunner` | Terminal verde, destaque ciano. |
+| `arasaka` | Vermelho corporativo frio sobre preto, destaque branco. |
+
+```html
+<body class="cf-root" data-cf-theme="yellow">…</body>
+<section data-cf-theme="netrunner">…só esta parte muda…</section>
+```
+
+### Criando o seu tema
+
+As cores com transparência usam canais RGB (`rgb(var(--cf-red-rgb) / .3)`), então um tema precisa definir a cor e o canal. Os tokens derivados (linhas, fundos, brilhos) são recalculados dentro de qualquer elemento com `data-cf-theme`:
+
+```css
+[data-cf-theme="ouro"] {
+  --cf-red: #F0B537;  --cf-red-rgb: 240 181 55;   /* cor de sistema */
+  --cf-cyan: #5EF6FF; --cf-cyan-rgb: 94 246 255;  /* destaque */
+  --cf-red-deep-rgb: 48 36 10;                    /* fundo de botões */
+  --cf-fg-muted: rgb(240 181 55 / .72);
+}
+```
+
+Tokens que um tema costuma mexer: `--cf-red(-rgb)`, `--cf-cyan(-rgb)`, `--cf-void(-rgb)`, `--cf-bg`, `--cf-surface(-rgb)`, `--cf-red-deep(-rgb)`, `--cf-fg`, `--cf-fg-muted`, `--cf-fg-dim`, `--cf-gold(-rgb)`, `--cf-hot`.
+
+### Tema só com classe (versões antigas)
+
+Também dá para sobrescrever variáveis numa classe. Exemplo de um tema **ciano** (para uma interface "civil" em vez de "militar"):
 
 ```css
 .theme-civil {
@@ -968,7 +1106,7 @@ Para um componente específico, os mesmos tokens funcionam inline: `<cf-card sty
 - **Teclado:** abas com `←` `→` `Home` `End`; menu com `↑` `↓`; `Esc` fecha dialog, dropdown e tooltip; o foco volta ao gatilho.
 - **ARIA automático:** `aria-selected` e `aria-controls` nas abas, `aria-pressed` em toggles e itens, `aria-expanded` e `aria-haspopup` no dropdown, `aria-describedby` no tooltip, `role="switch"`, `role="meter"` e `role="progressbar"` com valores.
 - **Foco visível:** contorno ciano em todo elemento focável. Nos chanfrados, a própria linha do chanfro fica ciano.
-- **Movimento reduzido:** com `prefers-reduced-motion`, animações e glitch são desligados.
+- **Movimento reduzido:** com `prefers-reduced-motion`, animações, glitch, boot, varredura, decodificação e granulado animado são desligados.
 - **Contraste:** o vermelho `#F75049` sobre `#0E0E17` tem contraste de aproximadamente 5,6:1 e o ciano, de aproximadamente 14:1. Ambos passam no AA para texto normal.
 
 > Ícones decorativos usam `aria-hidden`. Em botões só com ícone, sempre passe um `aria-label`.
@@ -1124,8 +1262,12 @@ O workflow [`ci.yml`](.github/workflows/ci.yml) roda em todo push e PR. Ele buil
 - [ ] Combobox com busca, Date picker, Paginação, Breadcrumb
 - [ ] Sidebar de aplicação e Command palette (`Ctrl+K`)
 - [ ] Drawer e File upload
-- [ ] Componentes de assinatura: HUD/minimapa, grade de hacking, terminal com digitação, transição de tela com glitch
-- [ ] Temas prontos (`civil`, `terminal-verde`, `ouro`)
+- [x] Movimento: boot de moldura, varredura no hover, glitch de entrada, texto que decodifica
+- [x] Textura: scanlines, granulado, neon, aberração cromática, overlay de tela
+- [x] Componentes do jogo: barra de vida com dano, opções de diálogo, objetivo de missão, recompensa
+- [x] Temas prontos (`yellow`, `netrunner`, `arasaka`)
+- [ ] Mais componentes de assinatura: menu radial, comparação de item, grade de hacking (Breach Protocol), tela de carregamento, minimapa
+- [ ] Sons de interface opcionais
 - [x] Schematic `ng add` (CSS, fontes e classes do `<body>`)
 - [x] CI com teste do `ng add` num app novo
 - [ ] Testes unitários por componente e testes visuais de regressão

@@ -11,6 +11,8 @@ import { CfItem, CfItemGrid, CfKv, CfNum, CfProgress, CfSegments, CfStat, CfTabl
 import { CfAlert, CfDialog, CfToaster } from './feedback/feedback';
 import { CfDropdown, CfDropdownTrigger, CfMenu, CfMenuItem, CfMenuLabel, CfMenuSeparator, CfTooltip } from './overlay/overlay';
 import { CfAccordion, CfAccordionItem, CfTile } from './navigation/navigation';
+import { CfBoot, CfDecode, CfFxOverlay } from './fx/fx';
+import { CfChoice, CfChoices, CfHealth, CfObjective } from './game/game';
 import { CfAvatar, CfDecor, CfDivider, CfGlitch, CfSkeleton, CfSpinner, CfSysblock } from './decor/decor';
 
 /**
@@ -30,4 +32,6 @@ export const CHAMFER_UI = [
   CfTooltip, CfMenu, CfMenuItem, CfMenuSeparator, CfMenuLabel, CfDropdown, CfDropdownTrigger,
   CfTile, CfAccordion, CfAccordionItem,
   CfAvatar, CfGlitch, CfDivider, CfDecor, CfSkeleton, CfSpinner, CfSysblock,
+  CfBoot, CfDecode, CfFxOverlay,
+  CfHealth, CfChoices, CfChoice, CfObjective,
 ] as const;

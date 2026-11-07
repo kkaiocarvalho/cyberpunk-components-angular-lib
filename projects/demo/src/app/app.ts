@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { JsonPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CHAMFER_UI, CfToastService } from '@kkaiocarvalho/chamfer-ui';
+import { CHAMFER_UI, CfObjectiveStep, CfToastService } from '@kkaiocarvalho/chamfer-ui';
 
 interface NetNode { id: string; district: string; status: 'Estável' | 'Instável' | 'Offline'; latency: number | null; load: number }
 
@@ -12,10 +12,50 @@ interface NetNode { id: string; district: string; status: 'Estável' | 'Instáve
   templateUrl: './app.html',
 })
 export class App {
-  private readonly toast = inject(CfToastService);
+  protected readonly toast = inject(CfToastService);
   private readonly fb = inject(FormBuilder);
 
   protected readonly view = signal('components');
+
+  /* ---- aba Jogo ---- */
+  protected readonly themes = [
+    { id: 'default', label: 'Padrão' }, { id: 'yellow', label: 'Amarelo' },
+    { id: 'netrunner', label: 'Netrunner' }, { id: 'arasaka', label: 'Arasaka' },
+  ];
+  protected readonly theme = signal('default');
+  protected readonly fxScan = signal(false);
+  protected readonly fxGrain = signal(false);
+  protected readonly fxVignette = signal(false);
+  private readonly titles = ['NIGHT CITY', 'CONEXÃO SEGURA', 'BRAÇO GORILA MK.2', 'CONTRATO ACEITO'];
+  protected readonly title = signal(this.titles[0]);
+  protected readonly hp = signal(420);
+  protected readonly shieldHp = signal(200);
+  protected readonly ram = signal(10);
+  protected readonly objUpdated = signal(false);
+  protected readonly steps = signal<CfObjectiveStep[]>([
+    { text: 'Encontre Dex no Afterlife', done: true },
+    { text: 'Fale com Jackie' },
+    { text: 'Compre um cyberdeck (opcional)', optional: true },
+  ]);
+  protected readonly bootKey = signal(true);
+
+  protected nextTitle() { this.title.set(this.titles[(this.titles.indexOf(this.title()) + 1) % this.titles.length]); }
+  protected hit() {
+    if (this.shieldHp() > 0) this.shieldHp.set(Math.max(0, this.shieldHp() - 70));
+    else this.hp.set(Math.max(0, this.hp() - 85));
+  }
+  protected heal() { this.hp.set(420); this.shieldHp.set(200); }
+  protected choice(key: string) {
+    if (key === '1') {
+      this.steps.update((l) => l.map((s, i) => (i === 1 ? { ...s, done: true } : s)));
+      this.objUpdated.set(true);
+      setTimeout(() => this.objUpdated.set(false), 1600);
+      this.toast.show({ heading: 'Missão atualizada', body: 'Siga para o ponto marcado.', variant: 'quest' });
+    } else if (key === '5') {
+      this.toast.show({ heading: 'Conversa encerrada' });
+    }
+  }
+  protected reboot() { this.bootKey.set(false); setTimeout(() => this.bootKey.set(true), 30); }
   protected readonly invTab = signal('inv');
   protected readonly selectedItem = signal(1);
   protected readonly dialogOpen = signal(false);

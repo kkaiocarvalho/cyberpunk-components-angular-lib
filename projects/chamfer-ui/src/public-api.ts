@@ -13,4 +13,6 @@ export * from './lib/feedback/feedback';
 export * from './lib/overlay/overlay';
 export * from './lib/navigation/navigation';
 export * from './lib/decor/decor';
+export * from './lib/fx/fx';
+export * from './lib/game/game';
 export * from './lib/chamfer';

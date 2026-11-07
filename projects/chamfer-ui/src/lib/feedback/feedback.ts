@@ -4,10 +4,10 @@ import {
 } from '@angular/core';
 import { CfIcon, CfIconName } from '../icon/icon';
 
-export type CfAlertVariant = 'default' | 'info' | 'success' | 'warning' | 'quest';
+export type CfAlertVariant = 'default' | 'info' | 'success' | 'warning' | 'quest' | 'reward';
 
 const ALERT_ICON: Record<CfAlertVariant, CfIconName> = {
-  default: 'warn', info: 'info', success: 'check', warning: 'warn', quest: 'pin',
+  default: 'warn', info: 'info', success: 'check', warning: 'warn', quest: 'pin', reward: 'star',
 };
 
 /* -------------------------------------------------------------------------- */
@@ -74,6 +74,10 @@ export class CfToastService {
     this.toasts.update((l) => [...l, t]);
     if (t.duration > 0) setTimeout(() => this.dismiss(t.id), t.duration);
     return t.id;
+  }
+  /** Aviso de recompensa: this.toast.reward('+250 XP', 'Reputação de rua'). */
+  reward(heading: string, body?: string, duration = 3200): number {
+    return this.show({ heading, body, variant: 'reward', duration });
   }
   dismiss(id: number): void {
     this.toasts.update((l) => l.map((t) => (t.id === id ? { ...t, leaving: true } : t)));
